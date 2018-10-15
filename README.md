@@ -36,5 +36,5 @@
 
 ### Uninstall instructions
   
-  In case that installation fails run **uninstall.sh** from **/ocp-homework/jobs** directory.
+  In case that installation fails run **uninstall.sh** from **/ocp-homework/** directory.
   Delete directories ocp-homework and pvs.
