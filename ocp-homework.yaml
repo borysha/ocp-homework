@@ -1,0 +1,162 @@
+---
+- name: Prepare GUID environment variable across all hosts
+  hosts: all
+  tasks:
+    - name: All GUID env variable
+      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
+
+- name: Verify Installation and Configuration of Docker
+  hosts: nodes
+  tasks:
+    - name: docker restart
+      shell: systemctl restart docker
+    - name: Validate docker service
+      shell: systemctl status docker | grep Active
+
+- name: Verify NFS Shared Volumes on Hosts
+  hosts: nfs
+  tasks:
+    - name: Check NFS Shared Volumes
+      shell: exportfs
+
+- name: Install packages and config auth
+  hosts: localhost
+  tasks:
+    - name: required packages are present
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - atomic-openshift-utils
+        - atomic-openshift-clients
+        state: present
+
+- name: Execute the openshift-ansible prerequisites
+  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+
+- name: Execute the openshift-ansible Deployer
+  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
+
+- name: Verify OpenShift Cluster
+  hosts: masters[0]
+  tasks:
+    - name: copy the .kube directory from master1 to your bastion
+      fetch: dest=/root/.kube/config src=/root/.kube/config flat=yes
+
+- name: Login to cluster
+  hosts: localhost
+  tasks:
+    - name: Login to OCP cluster
+      shell: oc login -u system:admin
+
+- name: Post installation configuration
+  hosts: localhost
+  tasks:
+    - name: check that you are system:dmin
+      shell: oc whoami | grep system:admin
+
+- name: Create PVs for Users
+  hosts: nfs
+  tasks:
+    - name: Create PVs script
+      script: ./jobs/create-pvs.sh
+    - name: Restarting NFS Server...
+      shell: systemctl restart nfs-server
+
+- name: Create 25 definitions files for PVs 5G size
+  hosts: localhost
+  tasks:
+    - name: Create PVs - 5G script
+      script: ./jobs/create-5G-pvs.sh
+
+- name: Create 25 definitions files for PVs 10G size
+  hosts: localhost
+  tasks:
+    - name: Create PVs - 10G script
+      script: ./jobs/create-10G-pvs.sh
+
+- name: Create all PVs from definitions files
+  hosts: localhost
+  tasks:
+    - name: Create PVs from the definitions for 5G and 10G
+      shell: cat /root/pvs/* | oc create -f -
+
+- name: Fix NFS Persistent Volume Recycling
+  hosts: nodes
+  tasks:
+    - name: Pull latest ose-recycler
+      shell: docker pull registry.access.redhat.com/openshift3/ose-recycler:latest
+    - name: Tag latest ose-recycler
+      shell: docker tag registry.access.redhat.com/openshift3/ose-recycler:latest registry.access.redhat.com/openshift3/ose-recycler:v3.9.30
+
+- name: Set network policy
+  hosts: localhost
+  tasks:
+    - name: Apply network policy
+      shell: oc label namespace default name=default
+    - name: Apply project request in default project
+      shell: oc project default; oc apply -f ./definitions/project-template.yaml
+
+- name: Set default network policy for new projects
+  hosts: masters
+  tasks:
+    - name: Inject project request template as default project request
+      replace:
+        path: /etc/origin/master/master-config.yaml
+        regexp: "projectRequestTemplate: ''"
+        replace: "projectRequestTemplate: \"default/project-request\""
+        backup: yes
+    - name: Restart OpenShift masters
+      shell: systemctl restart atomic-openshift-master-api; systemctl restart atomic-openshift-master-controllers
+
+- name: Smoke Test
+  hosts: localhost
+  tasks:
+    - name: Create and test a default nodejs-mongodb app
+      script: ./jobs/create-app-smoke-test.sh
+
+- name: Jenkins Setup
+  hosts: localhost
+  tasks:
+    - name: Setup Jenkins with persistent storage
+      script: ./jobs/create-jenkins-persistent.sh
+
+- name: Prepare and Deploy OpenShift Tasks
+  hosts: localhost
+  tasks:
+    - name: Import openShift-tasks template
+      shell: oc project openshift; oc apply -f https://raw.githubusercontent.com/OpenShiftDemos/openshift-tasks/master/app-template.yaml
+    - name: Create necessary image streams
+      shell: oc project openshift; oc apply -f https://raw.githubusercontent.com/jboss-openshift/application-templates/master/eap/eap64-image-stream.json
+    - name: Create dev env and install tasks
+      shell: oc project cicd-dev; oc new-app openshift-tasks
+    - name: Setup bc for tasks
+      shell: oc project cicd; oc apply -f ./definitions/cicd-jenkins-pipeline.yaml
+
+- name: Creation of users for Alpha and Beta clients
+  hosts: masters
+  tasks:
+    - name: Creation of users
+      script: ./jobs/add-users.sh
+
+- name: Assigning labels to the users according to its group
+  hosts: localhost
+  tasks:
+    - name: Groups and labels
+      script: ./jobs/add-labels.sh
+
+- name: Setup the environment for Alpha and Beta clients
+  hosts: localhost
+  tasks:
+    - name: Create project for Alpha Corp
+      shell: oc new-project alphacorp; oc label namespace alphacorp client=alpha; oc adm policy add-role-to-group edit alphacorp -n alphacorp
+    - name: Create project for Beta Corp
+      shell: oc new-project betacorp; oc label namespace betacorp client=beta; oc adm policy add-role-to-group edit betacorp -n betacorp
+
+- name: HPA config on openshift-tasks
+  hosts: localhost
+  tasks:
+    - name: Set CPU request
+      shell: oc project cicd-prod; oc set resources dc tasks --requests=cpu=100m
+    - name: Configure autoscaler for openshift-tasks
+      shell: oc project cicd-prod; oc autoscale dc tasks --min 1 --max 4 --cpu-percent=80
