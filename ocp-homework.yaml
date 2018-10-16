@@ -59,7 +59,7 @@
   hosts: nfs
   tasks:
     - name: Create PVs script
-      script: ./jobs/create-pvs.sh
+      script: ./tasks/create-pvs.sh
     - name: Restarting NFS Server...
       shell: systemctl restart nfs-server
 
@@ -67,13 +67,13 @@
   hosts: localhost
   tasks:
     - name: Create PVs - 5G script
-      script: ./jobs/create-5G-pvs.sh
+      script: ./tasks/create-5G-pvs.sh
 
 - name: Create 25 definitions files for PVs 10G size
   hosts: localhost
   tasks:
     - name: Create PVs - 10G script
-      script: ./jobs/create-10G-pvs.sh
+      script: ./tasks/create-10G-pvs.sh
 
 - name: Create all PVs from definitions files
   hosts: localhost
@@ -113,13 +113,13 @@
   hosts: localhost
   tasks:
     - name: Create and test a default nodejs-mongodb app
-      script: ./jobs/create-app-smoke-test.sh
+      script: ./tasks/create-app-smoke-test.sh
 
 - name: Jenkins Setup
   hosts: localhost
   tasks:
     - name: Setup Jenkins with persistent storage
-      script: ./jobs/create-jenkins-persistent.sh
+      script: ./tasks/create-jenkins-persistent.sh
 
 - name: Prepare and Deploy OpenShift Tasks
   hosts: localhost
@@ -137,13 +137,13 @@
   hosts: masters
   tasks:
     - name: Creation of users
-      script: ./jobs/add-users.sh
+      script: ./tasks/add-users.sh
 
 - name: Assigning labels to the users according to its group
   hosts: localhost
   tasks:
     - name: Groups and labels
-      script: ./jobs/add-labels.sh
+      script: ./tasks/add-labels.sh
 
 - name: Setup the environment for Alpha and Beta clients
   hosts: localhost
