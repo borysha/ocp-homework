@@ -2,6 +2,9 @@
 
 ## OpenShift Advanced Deployment with OpenShift 3.9 finall assignment lab.
 
+You are a consultant assigned to a telecommunications company called MitziCom. MitziCom provides hosting and cloud services to a variety of clients, from medium size companies to enterprise giants.
+
+MitziCom has asked you to lead a 30-40 hour proof-of-concept (POC) using Red Hat OpenShift Container Platform. The purpose of the POC is to determine the feasibility of using Red Hat OpenShift Container Platform as a target for internal and client workloads.
 MitziCom management requires that you include all of the items listed in these subsections in your POC.
 
 * Full Automation
