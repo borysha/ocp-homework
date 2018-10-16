@@ -11,7 +11,7 @@ MitziCom management requires that you include all of the items listed in these s
 MitziCom will be deploying your work onto their own systems. Management wants to ease the burnen on SREs, so they must be able to deploy your work on their infrastructure in an automated fashion in a single command.
 
 * Automation Requirements
-Create a public GitHub repository with all your work which can be cloned onto a homework environment bastion host and executed to complete all the steps
+** Create a public GitHub repository with all your work which can be cloned onto a homework environment bastion host and executed to complete all the steps
 
 Include an Ansible inventory file based on the which deploys the desired OpenShift and its hosted components.
 
