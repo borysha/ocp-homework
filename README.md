@@ -3,7 +3,8 @@
 ## OpenShift Advanced Deployment with OpenShift 3.9 finall assignment lab.
 
 Homework description and requirements are here:
-https://www.opentlc.com/labs/ocp_advanced_deployment/06_1_Assignment_Lab.html#_poc_requirements
+https://www.opentlc.com/labs/ocp_advanced_deployment/08_1_Assignment_8_Hour_Lab.html
+https://www.opentlc.com/labs/ocp_advanced_deployment/08_X_Assignment_40_Hour_Lab.html
 
 ### Installation steps
 
