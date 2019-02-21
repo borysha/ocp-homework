@@ -47,3 +47,6 @@ https://www.opentlc.com/labs/ocp_advanced_deployment/06_1_Assignment_Lab.html#_p
   
   In case that installation fails run **uninstall.sh** from **/ocp-homework/** directory.
   Delete directories ocp-homework and pvs.
+  ```
+  # sh ./uninstall.sh
+  ```
