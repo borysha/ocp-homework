@@ -19,17 +19,17 @@
     - name: Check NFS Shared Volumes
       shell: exportfs
 
-- name: Install packages and config auth
-  hosts: localhost
-  tasks:
-    - name: required packages are present
-      yum:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - atomic-openshift-utils
-        - atomic-openshift-clients
-        state: present
+#- name: Install packages and config auth
+#  hosts: localhost
+#  tasks:
+#    - name: required packages are present
+#      yum:
+#        name: "{{ packages }}"
+#      vars:
+#        packages:
+#        - atomic-openshift-utils
+#        - atomic-openshift-clients
+#        state: present
 
 - name: Execute the openshift-ansible prerequisites
   import_playbook: /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
@@ -52,7 +52,7 @@
 - name: Post installation configuration
   hosts: localhost
   tasks:
-    - name: check that you are system:dmin
+    - name: check that you are system:admin
       shell: oc whoami | grep system:admin
 
 - name: Create PVs for Users
@@ -81,13 +81,13 @@
     - name: Create PVs from the definitions for 5G and 10G
       shell: cat /root/pvs/* | oc create -f -
 
-- name: Fix NFS Persistent Volume Recycling
-  hosts: nodes
-  tasks:
-    - name: Pull latest ose-recycler
-      shell: docker pull registry.access.redhat.com/openshift3/ose-recycler:latest
-    - name: Tag latest ose-recycler
-      shell: docker tag registry.access.redhat.com/openshift3/ose-recycler:latest registry.access.redhat.com/openshift3/ose-recycler:v3.9.30
+#- name: Fix NFS Persistent Volume Recycling
+#  hosts: nodes
+#  tasks:
+#    - name: Pull latest ose-recycler
+#      shell: docker pull registry.redhat.io/openshift3/ose-recycler
+#    - name: Tag latest ose-recycler
+#      shell: docker tag registry.redhat.io/openshift3/ose-recycler:latest registry.redhat.io/openshift3/ose-recycler:v3.11.43
 
 - name: Set network policy
   hosts: localhost
@@ -97,17 +97,23 @@
     - name: Apply project request in default project
       shell: oc project default; oc apply -f ./definitions/project-template.yaml
 
-- name: Set default network policy for new projects
-  hosts: masters
-  tasks:
-    - name: Inject project request template as default project request
-      replace:
-        path: /etc/origin/master/master-config.yaml
-        regexp: "projectRequestTemplate: ''"
-        replace: "projectRequestTemplate: \"default/project-request\""
-        backup: yes
-    - name: Restart OpenShift masters
-      shell: systemctl restart atomic-openshift-master-api; systemctl restart atomic-openshift-master-controllers
+#- name: Set default network policy for new projects
+#  hosts: masters
+#  tasks:
+#    - name: Inject project request template as default project request
+#      replace:
+#        path: /etc/origin/master/master-config.yaml
+#        regexp: "projectRequestTemplate: ''"
+#        replace: "projectRequestTemplate: \"default/project-request\""
+#        backup: yes
+#    - name: Restart OpenShift masters
+#      shell: master-restart api; master-restart controllers
+
+#- name: Pause for the restart to complete
+#  hosts: localhost
+#  tasks:
+#    - name: Pause
+#      shell: sleep 10 
 
 - name: Smoke Test
   hosts: localhost
@@ -157,6 +163,6 @@
   hosts: localhost
   tasks:
     - name: Set CPU request
-      shell: oc project cicd-prod; oc set resources dc tasks --requests=cpu=100m
+      shell: oc project cicd-dev; oc set resources dc tasks --requests=cpu=100m
     - name: Configure autoscaler for openshift-tasks
-      shell: oc project cicd-prod; oc autoscale dc tasks --min 1 --max 4 --cpu-percent=80
+      shell: oc project cicd-dev; oc autoscale dc tasks --min 1 --max 4 --cpu-percent=80
