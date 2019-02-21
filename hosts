@@ -69,9 +69,9 @@ openshift_master_api_port=443
 openshift_master_console_port=443
 
 #Default:  openshift_master_cluster_method=native
-openshift_master_cluster_hostname=loadbalancer.5b3d.internal
-openshift_master_cluster_public_hostname=master.5b3d.example.opentlc.com
-openshift_master_default_subdomain=apps.5b3d.example.opentlc.com
+openshift_master_cluster_hostname=loadbalancer.GUID.internal
+openshift_master_cluster_public_hostname=master.GUID.example.opentlc.com
+openshift_master_default_subdomain=apps.GUID.example.opentlc.com
 #openshift_master_ca_certificate={'certfile': '/root/intermediate_ca.crt', 'keyfile': '/root/intermediate_ca.key'}
 #openshift_master_overwrite_named_certificates=True
 
@@ -128,7 +128,7 @@ openshift_metrics_install_metrics=True
 openshift_metrics_storage_kind=nfs
 openshift_metrics_storage_access_modes=['ReadWriteOnce']
 openshift_metrics_storage_nfs_directory=/srv/nfs
-openshift_metrics_storage_nfs_server=support2.5b3d.internal
+openshift_metrics_storage_nfs_server=support2.GUID.internal
 openshift_metrics_storage_nfs_options='*(rw,root_squash)'
 openshift_metrics_storage_volume_name=metrics
 openshift_metrics_storage_volume_size=10Gi
@@ -238,35 +238,35 @@ nodes
 nfs
 
 [lb]
-loadbalancer.5b3d.internal
+loadbalancer.GUID.internal
 
 [masters]
-master1.5b3d.internal
-master2.5b3d.internal
-master3.5b3d.internal
+master1.GUID.internal
+master2.GUID.internal
+master3.GUID.internal
 
 [etcd]
-master1.5b3d.internal
-master2.5b3d.internal
-master3.5b3d.internal
+master1.GUID.internal
+master2.GUID.internal
+master3.GUID.internal
 
 [nodes]
 ## These are the masters
-master1.5b3d.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master2.5b3d.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
-master3.5b3d.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master1.GUID.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master2.GUID.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master3.GUID.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
 
 ## These are infranodes
-infranode1.5b3d.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
-infranode2.5b3d.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infranode1.GUID.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infranode2.GUID.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
 
 ## These are regular nodes
-node1.5b3d.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node2.5b3d.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node3.5b3d.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
-node4.5b3d.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node1.GUID.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node2.GUID.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node3.GUID.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node4.GUID.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
 
 
 [nfs]
-support1.5b3d.internal
+support1.GUID.internal
 
