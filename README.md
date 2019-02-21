@@ -34,7 +34,7 @@ https://www.opentlc.com/labs/ocp_advanced_deployment/06_1_Assignment_Lab.html#_p
 * Change credentials at host file:
 
   ```
-  # oreg_auth_user=CAHNGE_USERNAME
+  # oreg_auth_user=CHANGE_USERNAME
   # oreg_auth_password=CHANGE_PASSWORD
   ```
 * Run following to start the installation:
