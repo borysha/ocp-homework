@@ -1,6 +1,6 @@
-# Homework assignment: Advanced Deployment with OpenShift 3.9
+# Homework assignment: Advanced Deployment with OpenShift 3.11
 
-## OpenShift Advanced Deployment with OpenShift 3.9 finall assignment lab.
+## OpenShift Advanced Deployment with OpenShift 3.11 finall assignment lab.
 
 Homework description and requirements are here:
 https://www.opentlc.com/labs/ocp_advanced_deployment/08_1_Assignment_8_Hour_Lab.html
